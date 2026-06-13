@@ -27,7 +27,6 @@ export async function handleVoiceAudio(ctx: Context, fileId: string): Promise<vo
   const botToken = process.env.TELEGRAM_BOT_TOKEN ?? '';
   const user = await getOrCreateUser(String(from.id), from.first_name, from.username);
 
-  await ctx.reply('Processando seu audio...');
   await ctx.sendChatAction('typing');
 
   let tmpPath: string | null = null;
@@ -35,11 +34,6 @@ export async function handleVoiceAudio(ctx: Context, fileId: string): Promise<vo
   try {
     tmpPath = await downloadFile(fileId, botToken);
     const result = await parseAudioMessage(tmpPath);
-
-    if (result.transcribedText) {
-      await ctx.reply(`_"${result.transcribedText}"_`, { parse_mode: 'Markdown' });
-    }
-
     await processGeminiResult(ctx, user.id, result, result.transcribedText ?? '');
   } catch (err) {
     console.error('Erro ao processar audio:', err);
