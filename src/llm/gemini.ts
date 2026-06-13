@@ -3,7 +3,13 @@ import * as fs from 'fs';
 import { buildTextPrompt, buildAudioPrompt, CategoryType } from './prompts';
 import { getCurrentDate } from '../utils/date';
 
+// gemini-2.5-flash: melhor custo-beneficio para extracao financeira
+// suporta texto + audio (inline data), JSON nativo, estavel (nao deprecated)
+const MODEL = 'gemini-2.5-flash';
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '');
+
+const JSON_CONFIG = { responseMimeType: 'application/json' } as const;
 
 export type TransactionData = {
   type: 'INCOME' | 'EXPENSE';
@@ -42,6 +48,7 @@ export type GeminiResult = {
 };
 
 function parseResponse(raw: string): GeminiResult {
+  // responseMimeType: 'application/json' garante JSON puro, mas limpamos por seguranca
   const cleaned = raw
     .replace(/```json\s*/g, '')
     .replace(/```\s*/g, '')
@@ -68,7 +75,10 @@ function parseResponse(raw: string): GeminiResult {
 
 export async function parseTextMessage(text: string): Promise<GeminiResult> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({
+      model: MODEL,
+      generationConfig: JSON_CONFIG,
+    });
     const prompt = buildTextPrompt(text, getCurrentDate());
     const result = await model.generateContent(prompt);
     return parseResponse(result.response.text());
@@ -80,11 +90,13 @@ export async function parseTextMessage(text: string): Promise<GeminiResult> {
 
 export async function parseAudioMessage(audioFilePath: string): Promise<GeminiResult> {
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({
+      model: MODEL,
+      generationConfig: JSON_CONFIG,
+    });
     const prompt = buildAudioPrompt(getCurrentDate());
 
-    const audioData = fs.readFileSync(audioFilePath);
-    const base64Audio = audioData.toString('base64');
+    const base64Audio = fs.readFileSync(audioFilePath).toString('base64');
 
     const result = await model.generateContent([
       { text: prompt },
