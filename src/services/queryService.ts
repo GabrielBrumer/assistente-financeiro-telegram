@@ -4,6 +4,7 @@ import {
   sumByUserAndPeriod,
   sumByUserCategoryAndPeriod,
   groupByCategoryAndPeriod,
+  findByUserAndPeriod,
 } from '../repositories/transactionRepository';
 import { getMonthRange, getLastNDaysRange, formatMonthYear } from '../utils/date';
 import { formatCurrency } from '../utils/currency';
@@ -71,6 +72,58 @@ export async function processQuery(userId: string, query: QueryData): Promise<st
       const { start, end } = getLastNDaysRange(days);
       const total = await sumByUserAndPeriod(userId, start, end, 'EXPENSE');
       return `Despesas nos ultimos ${days} dias: *${formatCurrency(total)}*`;
+    }
+
+    case 'period_summary': {
+      const days = query.days ?? 30;
+      const { start, end } = getLastNDaysRange(days);
+      const [income, expense] = await Promise.all([
+        sumByUserAndPeriod(userId, start, end, 'INCOME'),
+        sumByUserAndPeriod(userId, start, end, 'EXPENSE'),
+      ]);
+      const balance = income - expense;
+      return (
+        `*Resumo dos ultimos ${days} dias*\n\n` +
+        `Receitas: ${formatCurrency(income)}\n` +
+        `Despesas: ${formatCurrency(expense)}\n` +
+        `Saldo: *${formatCurrency(balance)}*`
+      );
+    }
+
+    case 'list_transactions': {
+      let start: Date, end: Date, label: string;
+
+      if (query.days) {
+        ({ start, end } = getLastNDaysRange(query.days));
+        label = `ultimos ${query.days} dias`;
+      } else {
+        ({ start, end } = getMonthRange(month, year));
+        label = formatMonthYear(month, year);
+      }
+
+      const transactions = await findByUserAndPeriod(userId, start, end);
+
+      if (!transactions.length) {
+        return `Nenhum lancamento encontrado em ${label}.`;
+      }
+
+      const lines = transactions.map((t) => {
+        const sign = t.type === 'INCOME' ? '+' : '-';
+        const date = t.transactionDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        const amount = formatCurrency(parseFloat(t.amount.toString()));
+        const category = getCategoryLabel(t.category);
+        const desc = t.description ? ` | ${t.description}` : '';
+        return `${date} | ${sign} ${amount} | ${category}${desc}`;
+      });
+
+      const total = transactions.length;
+      const suffix = total === 100 ? ' (limite de 100 exibido)' : '';
+
+      return (
+        `*Lancamentos — ${label}*\n\n` +
+        lines.join('\n') +
+        `\n\nTotal: ${total} lancamento${total !== 1 ? 's' : ''}${suffix}`
+      );
     }
 
     default:

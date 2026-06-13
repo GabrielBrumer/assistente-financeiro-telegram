@@ -26,7 +26,9 @@ export type QueryData = {
     | 'monthly_summary'
     | 'expense_by_category'
     | 'income_by_period'
-    | 'expense_by_period';
+    | 'expense_by_period'
+    | 'period_summary'
+    | 'list_transactions';
   month: number | null;
   year: number | null;
   category: CategoryType | null;

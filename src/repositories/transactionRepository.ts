@@ -35,6 +35,23 @@ export async function updateTransactionByUser(
   await prisma.transaction.updateMany({ where: { id, userId }, data });
 }
 
+export async function findByUserAndPeriod(
+  userId: string,
+  start: Date,
+  end: Date,
+  type?: TransactionType
+): Promise<Transaction[]> {
+  return prisma.transaction.findMany({
+    where: {
+      userId,
+      transactionDate: { gte: start, lte: end },
+      ...(type ? { type } : {}),
+    },
+    orderBy: { transactionDate: 'desc' },
+    take: 100,
+  });
+}
+
 export async function sumByUserAndPeriod(
   userId: string,
   start: Date,

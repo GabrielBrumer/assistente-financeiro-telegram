@@ -24,7 +24,7 @@ const SCHEMA = `{
     "transactionDate": "YYYY-MM-DD"
   },
   "query": {
-    "type": "monthly_expense" | "monthly_income" | "monthly_summary" | "expense_by_category" | "income_by_period" | "expense_by_period",
+    "type": "monthly_expense" | "monthly_income" | "monthly_summary" | "expense_by_category" | "income_by_period" | "expense_by_period" | "period_summary" | "list_transactions",
     "month": null | number,
     "year": null | number,
     "category": null | "UMA_DAS_CATEGORIAS",
@@ -43,7 +43,9 @@ const RULES = `Regras:
 - Se nao identificar data, use a data atual informada
 - INCOME: salario, recebi, ganhei, pix recebido, renda, entrada
 - EXPENSE: gastei, paguei, comprei, custo, saida
-- Palavras-chave de query: quanto, resumo, total, extrato, historico
+- Palavras-chave de query: quanto, resumo, total, extrato, historico, listar, mostrar, ver lancamentos
+- period_summary: "resumo dos ultimos X dias/semanas/meses" — use days (ex: 60 dias = days:60)
+- list_transactions: "listar/mostrar/ver lancamentos" de um mes ou periodo
 - Palavras-chave de correction: apagar, deletar, excluir, corrigir, alterar, mudar, ultimo lancamento
 - Categorias validas: ${CATEGORIES.join(', ')}`;
 
