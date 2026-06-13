@@ -33,12 +33,20 @@ export type QueryData = {
   year: number | null;
   category: CategoryType | null;
   days: number | null;
+  date: string | null;
 };
 
 export type CorrectionData = {
-  type: 'delete_last' | 'update_last_category' | 'update_last_amount';
+  type:
+    | 'delete_last'
+    | 'update_last_category'
+    | 'update_last_amount'
+    | 'delete_by_position'
+    | 'update_by_position_category'
+    | 'update_by_position_amount';
   category: CategoryType | null;
   amount: number | null;
+  position: number | null;
 };
 
 export type GeminiResult = {

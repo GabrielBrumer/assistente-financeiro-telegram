@@ -13,14 +13,15 @@ export async function handleResumo(ctx: Context): Promise<void> {
   if (!from) return;
 
   const user = await getOrCreateUser(String(from.id), from.first_name, from.username);
-  const response = await processQuery(user.id, {
+  const { message } = await processQuery(user.id, {
     type: 'monthly_summary',
     month: null,
     year: null,
     category: null,
     days: null,
+    date: null,
   });
-  await ctx.reply(response, { parse_mode: 'Markdown' });
+  await ctx.reply(message, { parse_mode: 'Markdown' });
 }
 
 export async function handleCategorias(ctx: Context): Promise<void> {

@@ -54,3 +54,26 @@ export async function updateLastTransactionAmount(
   await updateTransactionByUser(last.id, userId, { amount });
   return { success: true, message: `Valor atualizado para R$ ${amount.toFixed(2)}.` };
 }
+
+export async function deleteTransactionById(userId: string, id: string): Promise<ServiceResult> {
+  await deleteTransactionByUser(id, userId);
+  return { success: true, message: 'Lancamento removido.' };
+}
+
+export async function updateTransactionCategoryById(
+  userId: string,
+  id: string,
+  category: string
+): Promise<ServiceResult> {
+  await updateTransactionByUser(id, userId, { category: category as Category });
+  return { success: true, message: `Categoria atualizada para ${category}.` };
+}
+
+export async function updateTransactionAmountById(
+  userId: string,
+  id: string,
+  amount: number
+): Promise<ServiceResult> {
+  await updateTransactionByUser(id, userId, { amount });
+  return { success: true, message: `Valor atualizado para R$ ${amount.toFixed(2)}.` };
+}
