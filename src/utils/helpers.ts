@@ -1,6 +1,7 @@
 export function getCategoryLabel(category: string): string {
   const labels: Record<string, string> = {
     ALIMENTACAO: 'Alimentacao',
+    PADARIA: 'Padaria',
     MERCADO: 'Mercado',
     TRANSPORTE: 'Transporte',
     MORADIA: 'Moradia',
@@ -9,6 +10,7 @@ export function getCategoryLabel(category: string): string {
     EDUCACAO: 'Educacao',
     SALARIO: 'Salario',
     PIX_RECEBIDO: 'Pix Recebido',
+    SERVICOS_REALIZADOS: 'Servicos Realizados',
     INVESTIMENTOS: 'Investimentos',
     OUTROS: 'Outros',
   };

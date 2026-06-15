@@ -23,6 +23,7 @@ enum TransactionType {
 
 enum Category {
   ALIMENTACAO
+  PADARIA
   MERCADO
   TRANSPORTE
   MORADIA
@@ -31,6 +32,7 @@ enum Category {
   EDUCACAO
   SALARIO
   PIX_RECEBIDO
+  SERVICOS_REALIZADOS
   INVESTIMENTOS
   OUTROS
 }

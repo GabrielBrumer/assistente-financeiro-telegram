@@ -4,8 +4,8 @@ import { processQuery } from '../../services/queryService';
 import { getCategoryLabel } from '../../utils/helpers';
 
 const ALL_CATEGORIES = [
-  'ALIMENTACAO', 'MERCADO', 'TRANSPORTE', 'MORADIA', 'SAUDE',
-  'LAZER', 'EDUCACAO', 'SALARIO', 'PIX_RECEBIDO', 'INVESTIMENTOS', 'OUTROS',
+  'ALIMENTACAO', 'PADARIA', 'MERCADO', 'TRANSPORTE', 'MORADIA', 'SAUDE',
+  'LAZER', 'EDUCACAO', 'SALARIO', 'PIX_RECEBIDO', 'SERVICOS_REALIZADOS', 'INVESTIMENTOS', 'OUTROS',
 ];
 
 export async function handleResumo(ctx: Context): Promise<void> {

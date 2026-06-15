@@ -1,5 +1,6 @@
 export const CATEGORIES = [
   'ALIMENTACAO',
+  'PADARIA',
   'MERCADO',
   'TRANSPORTE',
   'MORADIA',
@@ -8,6 +9,7 @@ export const CATEGORIES = [
   'EDUCACAO',
   'SALARIO',
   'PIX_RECEBIDO',
+  'SERVICOS_REALIZADOS',
   'INVESTIMENTOS',
   'OUTROS',
 ] as const;
