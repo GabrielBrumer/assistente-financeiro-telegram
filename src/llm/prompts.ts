@@ -41,11 +41,26 @@ const SCHEMA = `{
   }
 }`;
 
+const CATEGORY_GUIDE = `Guia de categorias (use a mais especifica possivel):
+- ALIMENTACAO: restaurante, lanchonete, refeicao, almoco, jantar, cafe, delivery, ifood, rappi, hamburger, pizza, sushi, churrascaria, bar, bebida, cerveja
+- PADARIA: padaria, pao, croissant, bolo, cafe da manha, confeitaria, doce, salgado
+- MERCADO: supermercado, mercado, feira, hortifruti, atacadao, atacado, hipermercado, sacolao, acougue, peixaria, mercearia, compras do mes
+- TRANSPORTE: uber, 99, taxi, combustivel, gasolina, etanol, diesel, estacionamento, pedagio, onibus, metro, trem, passagem, mecanico, revisao, pneu, ipva, seguro veiculo
+- MORADIA: aluguel, condominio, agua, luz, energia, gas, internet, telefone fixo, iptu, reforma, conserto casa, faxina, diarista, mobilia
+- SAUDE: farmacia, remedio, medico, consulta, exame, plano de saude, dentista, hospital, clinica, academia, suplemento
+- LAZER: cinema, teatro, show, viagem, hotel, passeio, parque, jogo, streaming, netflix, spotify, presente, festa, aniversario, esporte
+- EDUCACAO: escola, faculdade, curso, livro, material escolar, mensalidade, ingles, idioma, workshop, certificacao
+- SALARIO: salario, pagamento, holerite, pro-labore, adiantamento salarial
+- PIX_RECEBIDO: pix recebido, transferencia recebida, deposito recebido, dinheiro recebido
+- SERVICOS_REALIZADOS: servico prestado, trabalho realizado, freela, freelance, consultoria, comissao recebida, honorario, venda realizada
+- INVESTIMENTOS: investimento, aporte, aplication, cdb, tesouro direto, fundo, acoes, dividendos, rendimento, resgate
+- OUTROS: qualquer lancamento que nao se encaixe nas categorias acima`;
+
 const RULES = `Regras:
 - Preencha apenas o campo correspondente ao intent; os demais devem ser null
 - Se nao identificar valor em transacao, use intent: "unknown"
 - Se nao identificar data em transacao, use a data atual informada
-- INCOME: salario, recebi, ganhei, pix recebido, renda, entrada
+- INCOME: salario, recebi, ganhei, pix recebido, renda, entrada, servico prestado
 - EXPENSE: gastei, paguei, comprei, custo, saida
 - Palavras-chave de query: quanto, resumo, total, extrato, historico, listar, mostrar, ver lancamentos
 - period_summary: "resumo dos ultimos X dias/semanas/meses" — use days (ex: 60 dias = days:60)
@@ -56,7 +71,8 @@ const RULES = `Regras:
 - delete_by_position: "apagar o 1", "deletar lancamento 2" — use position (numero 1-based da lista)
 - update_by_position_amount: "alterar valor do 2 para 45", "corrigir valor do lancamento 3 para 100" — use position + amount
 - update_by_position_category: "corrigir categoria do 1 para mercado", "mudar categoria do 2" — use position + category
-- Categorias validas: ${CATEGORIES.join(', ')}`;
+
+${CATEGORY_GUIDE}`;
 
 export function buildTextPrompt(text: string, currentDate: string): string {
   return `Voce e um assistente financeiro. Analise a mensagem e retorne o JSON conforme o schema.
