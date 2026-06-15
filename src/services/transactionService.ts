@@ -21,7 +21,10 @@ export async function saveTransaction(
     category: data.category as Category,
     description: data.description,
     originalText,
-    transactionDate: new Date(data.transactionDate),
+    transactionDate: (() => {
+      const [y, mo, d] = data.transactionDate.split('-').map(Number);
+      return new Date(y, mo - 1, d, 0, 0, 0, 0);
+    })(),
   });
 }
 
