@@ -26,7 +26,8 @@ export async function processGeminiResult(
     const typeLabel = result.transaction.type === 'INCOME' ? 'Receita' : 'Despesa';
     const amount = formatCurrency(result.transaction.amount);
     const category = getCategoryLabel(result.transaction.category);
-    const date = new Date(result.transaction.transactionDate).toLocaleDateString('pt-BR');
+    const [ty, tm, td] = result.transaction.transactionDate.split('-').map(Number);
+    const date = new Date(ty, tm - 1, td).toLocaleDateString('pt-BR');
 
     await ctx.reply(
       `*Transacao registrada!*\n\n` +
