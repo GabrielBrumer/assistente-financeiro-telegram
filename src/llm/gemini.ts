@@ -50,7 +50,7 @@ export type CorrectionData = {
 };
 
 export type GeminiResult = {
-  intent: 'transaction' | 'query' | 'correction' | 'unknown';
+  intent: 'transaction' | 'query' | 'correction' | 'unknown' | 'unavailable';
   transcribedText?: string;
   transaction?: TransactionData;
   query?: QueryData;
@@ -106,9 +106,10 @@ export async function parseTextMessage(text: string): Promise<GeminiResult> {
     const prompt = buildTextPrompt(text, getCurrentDate());
     const result = await withRetry(() => model.generateContent(prompt));
     return parseResponse(result.response.text());
-  } catch (err) {
+  } catch (err: any) {
+    const is503 = err?.status === 503 || String(err?.message).includes('503');
     console.error('Erro Gemini (texto):', err);
-    return { intent: 'unknown' };
+    return { intent: is503 ? 'unavailable' : 'unknown' };
   }
 }
 
@@ -124,8 +125,9 @@ export async function parseAudioMessage(audioFilePath: string): Promise<GeminiRe
       ])
     );
     return parseResponse(result.response.text());
-  } catch (err) {
+  } catch (err: any) {
+    const is503 = err?.status === 503 || String(err?.message).includes('503');
     console.error('Erro Gemini (audio):', err);
-    return { intent: 'unknown' };
+    return { intent: is503 ? 'unavailable' : 'unknown' };
   }
 }

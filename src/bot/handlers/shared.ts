@@ -132,6 +132,13 @@ export async function processGeminiResult(
     return;
   }
 
+  if (result.intent === 'unavailable') {
+    await ctx.reply(
+      'Nosso servidor esta fora no momento. Tente registrar sua transacao em instantes.'
+    );
+    return;
+  }
+
   await ctx.reply(
     'Nao entendi. Exemplos:\n' +
       '"gastei 50 reais no mercado"\n' +
