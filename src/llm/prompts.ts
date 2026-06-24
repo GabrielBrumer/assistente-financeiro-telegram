@@ -62,6 +62,7 @@ const RULES = `Regras:
 - Se nao identificar data em transacao, use a data atual informada
 - INCOME: salario, recebi, ganhei, pix recebido, renda, entrada, servico prestado
 - EXPENSE: gastei, paguei, comprei, custo, saida
+- Se a mensagem contiver apenas um valor numerico e um local/categoria sem verbo explicito, classifique como EXPENSE. Exemplos: "23,45 padaria", "50 mercado", "12 onibus", "8,90 cafe"
 - Palavras-chave de query: quanto, resumo, total, extrato, historico, listar, mostrar, ver lancamentos
 - period_summary: "resumo dos ultimos X dias/semanas/meses" — use days (ex: 60 dias = days:60)
 - list_transactions com date: "listar lancamentos de hoje", "ver do dia 10/06", "mostrar ontem" — calcule a data exata e use date:"YYYY-MM-DD"
