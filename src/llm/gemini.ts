@@ -57,6 +57,23 @@ export type GeminiResult = {
   correction?: CorrectionData;
 };
 
+async function withRetry<T>(fn: () => Promise<T>, retries = 3, delayMs = 2000): Promise<T> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      const is503 = err?.status === 503 || String(err?.message).includes('503');
+      if (is503 && attempt < retries) {
+        console.warn(`Gemini 503, tentativa ${attempt}/${retries}. Aguardando ${delayMs}ms...`);
+        await new Promise((r) => setTimeout(r, delayMs));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('Numero maximo de tentativas atingido');
+}
+
 function parseResponse(raw: string): GeminiResult {
   // responseMimeType: 'application/json' garante JSON puro, mas limpamos por seguranca
   const cleaned = raw
@@ -85,12 +102,9 @@ function parseResponse(raw: string): GeminiResult {
 
 export async function parseTextMessage(text: string): Promise<GeminiResult> {
   try {
-    const model = genAI.getGenerativeModel({
-      model: MODEL,
-      generationConfig: JSON_CONFIG,
-    });
+    const model = genAI.getGenerativeModel({ model: MODEL, generationConfig: JSON_CONFIG });
     const prompt = buildTextPrompt(text, getCurrentDate());
-    const result = await model.generateContent(prompt);
+    const result = await withRetry(() => model.generateContent(prompt));
     return parseResponse(result.response.text());
   } catch (err) {
     console.error('Erro Gemini (texto):', err);
@@ -100,19 +114,15 @@ export async function parseTextMessage(text: string): Promise<GeminiResult> {
 
 export async function parseAudioMessage(audioFilePath: string): Promise<GeminiResult> {
   try {
-    const model = genAI.getGenerativeModel({
-      model: MODEL,
-      generationConfig: JSON_CONFIG,
-    });
+    const model = genAI.getGenerativeModel({ model: MODEL, generationConfig: JSON_CONFIG });
     const prompt = buildAudioPrompt(getCurrentDate());
-
     const base64Audio = fs.readFileSync(audioFilePath).toString('base64');
-
-    const result = await model.generateContent([
-      { text: prompt },
-      { inlineData: { mimeType: 'audio/ogg', data: base64Audio } },
-    ]);
-
+    const result = await withRetry(() =>
+      model.generateContent([
+        { text: prompt },
+        { inlineData: { mimeType: 'audio/ogg', data: base64Audio } },
+      ])
+    );
     return parseResponse(result.response.text());
   } catch (err) {
     console.error('Erro Gemini (audio):', err);
